@@ -92,7 +92,7 @@ public class TasksService {
 	}
 
 	public List<TasksDTO> getAllTasks() {
-		
+
 		return tasksRepository.findAll().stream().map(this::convertToDTO).toList();
 
 	}
