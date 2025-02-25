@@ -57,7 +57,6 @@ public class TasksService {
 		tasksFindById.setTypeId(typeFindById);
 		tasksFindById.setDescription(tasksDTO.getDescription());
 		tasksFindById.setStatus(StatusEnum.valueOf(tasksDTO.getStatus()));
-		tasksFindById.setDateHourCreation(LocalDateTime.now());
 
 		tasksFindById.setDateHourComplete(
 				Objects.equals(tasksDTO.getStatus(), StatusEnum.CONCLUIDA) ? LocalDateTime.now() : null);
@@ -68,76 +67,60 @@ public class TasksService {
 
 	}
 
-	public TasksDTO getTasksDTO(Integer id) {
+	private TasksDTO convertToDTO(Tasks task) {
+
+		TasksDTO dto = new TasksDTO();
+		dto.setId(task.getId());
+		dto.setStatus(task.getStatus().toString());
+		dto.setDescription(task.getDescription());
+		dto.setTypeId(task.getTypeId().getId());
+		dto.setDateHourCreation(task.getDateHourCreation().toString());
+		dto.setDateHourEdit(task.getDateHourEdit().toString());
+		dto.setDateHourComplete(task.getDateHourComplete() != null ? task.getDateHourComplete().toString() : null);
+		return dto;
+
+	}
+
+	public TasksDTO getTaskById(Integer id) {
 
 		Tasks tasksFindById = tasksRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("task not found"));
 
-		TasksDTO tasksDTO = new TasksDTO();
-		tasksDTO.setId(id);
-		tasksDTO.setStatus(tasksFindById.getStatus().toString());
-		tasksDTO.setDescription(tasksFindById.getDescription());
-		tasksDTO.setTypeId(tasksFindById.getTypeId().getId());
-		tasksDTO.setDateHourCreation(tasksFindById.getDateHourCreation().toString());
-		tasksDTO.setDateHourEdit(tasksFindById.getDateHourEdit().toString());
-		tasksDTO.setDateHourComplete(tasksFindById.getDateHourComplete().toString());
+		TasksDTO tasksDTO = convertToDTO(tasksFindById);
 
 		return tasksDTO;
 	}
 
-	public List<TasksDTO> getTasks() {
+	public List<TasksDTO> getAllTasks() {
+		
+		return tasksRepository.findAll().stream().map(this::convertToDTO).toList();
 
-		List<Tasks> tasksFindById = tasksRepository.findAll();
+	}
+
+	private List<TasksDTO> getTasksByDateRange(LocalDateTime start, LocalDateTime finish) {
+		List<Tasks> tasksFindByDiary = tasksRepository.findByDateHourCreationBetween(start, finish);
 		List<TasksDTO> listDtos = new ArrayList<>();
 
-		if (!tasksFindById.isEmpty()) {
-
-			for (Tasks task : tasksFindById) {
-				TasksDTO taskDTO = new TasksDTO();
-				taskDTO.setId(task.getId());
-				taskDTO.setStatus(task.getStatus().toString());
-				taskDTO.setDescription(task.getDescription());
-				taskDTO.setTypeId(task.getTypeId().getId());
-				taskDTO.setDateHourCreation(task.getDateHourCreation().toString());
-				taskDTO.setDateHourEdit(task.getDateHourEdit().toString());
-				taskDTO.setDateHourComplete(task.getDateHourComplete().toString());
-				listDtos.add(taskDTO);
-			}
-
+		for (Tasks tasks : tasksFindByDiary) {
+			listDtos.add(convertToDTO(tasks));
 		}
-
 		return listDtos;
 	}
 
 	public List<TasksDTO> getTasksDiary() {
-
 		LocalDate today = LocalDate.now();
-		LocalDateTime start = today.atStartOfDay();
-		LocalDateTime finish = today.atTime(23, 59, 59);
+		return getTasksByDateRange(today.atStartOfDay(), today.atTime(23, 59, 59));
+	}
 
-		List<Tasks> tasksFindByDiary = tasksRepository.findByDateHourCreationBetween(start, finish);
-		List<TasksDTO> listDtos = new ArrayList<>();
-
-		if (!tasksFindByDiary.isEmpty()) {
-
-			for (Tasks task : tasksFindByDiary) {
-				TasksDTO taskDTO = new TasksDTO();
-				taskDTO.setId(task.getId());
-				taskDTO.setStatus(task.getStatus().toString());
-				taskDTO.setDescription(task.getDescription());
-				taskDTO.setTypeId(task.getTypeId().getId());
-				taskDTO.setDateHourCreation(task.getDateHourCreation().toString());
-				taskDTO.setDateHourEdit(task.getDateHourEdit().toString());
-				taskDTO.setDateHourComplete(task.getDateHourComplete().toString());
-				listDtos.add(taskDTO);
-			}
-
-		}
-
-		return listDtos;
+	public List<TasksDTO> getTasksDiaryByDate(LocalDate date) {
+		return getTasksByDateRange(date.atStartOfDay(), date.atTime(23, 59, 59));
 	}
 
 	public void deleteTasks(Integer id) {
+		if (!tasksRepository.existsById(id)) {
+			throw new IllegalArgumentException("Task not found");
+		}
+
 		tasksRepository.deleteById(id);
 	}
 
