@@ -21,16 +21,12 @@ public class Tasks {
 	@SequenceGenerator(name = "tasks_sequence", sequenceName = "tasks_sequence", allocationSize = 1)
 	private Integer id;
 
-	@Column(name = "type_id")
-	private Type typeId;
-
 	@Column(name = "description")
 	private String description;
 
-	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
-	private StatusEnum status;
-
+	private String status;
+	
 	@Column(name = "date_hour_creation")
 	private LocalDateTime dateHourCreation;
 
@@ -48,14 +44,6 @@ public class Tasks {
 		this.id = id;
 	}
 
-	public Type getTypeId() {
-		return typeId;
-	}
-
-	public void setTypeId(Type typeId) {
-		this.typeId = typeId;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -64,11 +52,11 @@ public class Tasks {
 		this.description = description;
 	}
 
-	public StatusEnum getStatus() {
+	public String  getStatus() {
 		return status;
 	}
 
-	public void setStatus(StatusEnum status) {
+	public void setStatus(String  status) {
 		this.status = status;
 	}
 

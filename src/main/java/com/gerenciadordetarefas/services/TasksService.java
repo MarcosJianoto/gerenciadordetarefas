@@ -11,30 +11,23 @@ import org.springframework.stereotype.Service;
 import com.gerenciadordetarefas.dto.TasksDTO;
 import com.gerenciadordetarefas.entities.StatusEnum;
 import com.gerenciadordetarefas.entities.Tasks;
-import com.gerenciadordetarefas.entities.Type;
 import com.gerenciadordetarefas.repositories.TasksRepository;
-import com.gerenciadordetarefas.repositories.TypeRepository;
 
 @Service
 public class TasksService {
 
 	private final TasksRepository tasksRepository;
-	private final TypeRepository typeRepository;
 
-	public TasksService(TasksRepository tasksRepository, TypeRepository typeRepository) {
+	public TasksService(TasksRepository tasksRepository) {
 		this.tasksRepository = tasksRepository;
-		this.typeRepository = typeRepository;
 	}
 
 	public void saveTask(TasksDTO tasksDTO) {
 
-		Type typeFindById = typeRepository.findById(tasksDTO.getTypeId())
-				.orElseThrow(() -> new IllegalArgumentException("Type not found"));
 
 		Tasks tasks = new Tasks();
-		tasks.setTypeId(typeFindById);
 		tasks.setDescription(tasksDTO.getDescription());
-		tasks.setStatus(StatusEnum.valueOf(tasksDTO.getStatus()));
+		tasks.setStatus(tasksDTO.getStatus());
 		tasks.setDateHourCreation(LocalDateTime.now());
 
 		tasks.setDateHourComplete(
@@ -51,12 +44,9 @@ public class TasksService {
 		Tasks tasksFindById = tasksRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Task not found"));
 
-		Type typeFindById = typeRepository.findById(tasksDTO.getTypeId())
-				.orElseThrow(() -> new IllegalArgumentException("Type not found"));
 
-		tasksFindById.setTypeId(typeFindById);
 		tasksFindById.setDescription(tasksDTO.getDescription());
-		tasksFindById.setStatus(StatusEnum.valueOf(tasksDTO.getStatus()));
+		tasksFindById.setStatus(tasksDTO.getStatus());
 
 		tasksFindById.setDateHourComplete(
 				Objects.equals(tasksDTO.getStatus(), StatusEnum.CONCLUIDA) ? LocalDateTime.now() : null);
@@ -72,7 +62,6 @@ public class TasksService {
 		dto.setId(task.getId());
 		dto.setStatus(task.getStatus().toString());
 		dto.setDescription(task.getDescription());
-		dto.setTypeId(task.getTypeId().getId());
 		dto.setDateHourCreation(task.getDateHourCreation().toString());
 		dto.setDateHourEdit(task.getDateHourEdit().toString());
 		dto.setDateHourComplete(task.getDateHourComplete() != null ? task.getDateHourComplete().toString() : null);
