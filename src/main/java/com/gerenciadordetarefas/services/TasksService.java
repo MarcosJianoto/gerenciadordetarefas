@@ -68,7 +68,6 @@ public class TasksService {
 	}
 
 	private TasksDTO convertToDTO(Tasks task) {
-
 		TasksDTO dto = new TasksDTO();
 		dto.setId(task.getId());
 		dto.setStatus(task.getStatus().toString());
@@ -78,26 +77,23 @@ public class TasksService {
 		dto.setDateHourEdit(task.getDateHourEdit().toString());
 		dto.setDateHourComplete(task.getDateHourComplete() != null ? task.getDateHourComplete().toString() : null);
 		return dto;
-
 	}
 
 	public TasksDTO getTaskById(Integer id) {
-
+		
 		Tasks tasksFindById = tasksRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("task not found"));
-
 		TasksDTO tasksDTO = convertToDTO(tasksFindById);
-
+		
 		return tasksDTO;
 	}
 
 	public List<TasksDTO> getAllTasks() {
-
 		return tasksRepository.findAll().stream().map(this::convertToDTO).toList();
-
 	}
 
 	private List<TasksDTO> getTasksByDateRange(LocalDateTime start, LocalDateTime finish) {
+		
 		List<Tasks> tasksFindByDiary = tasksRepository.findByDateHourCreationBetween(start, finish);
 		List<TasksDTO> listDtos = new ArrayList<>();
 
