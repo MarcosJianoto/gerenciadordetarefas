@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import com.gerenciadordetarefas.dto.TasksDTO;
 import com.gerenciadordetarefas.services.TasksService;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class TasksController {
 
 	private final TasksService tasksService;
@@ -59,8 +61,8 @@ public class TasksController {
 
 	@GetMapping("/tasks/diary/{date}")
 	public ResponseEntity<List<TasksDTO>> getTasksDiaryByDate(@PathVariable String date) {
-		LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);//YYYY-MM-DD
-		
+		LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);// YYYY-MM-DD
+
 		List<TasksDTO> tasksDTO = tasksService.getTasksDiaryByDate(parsedDate);
 		return ResponseEntity.ok().body(tasksDTO);
 	}
