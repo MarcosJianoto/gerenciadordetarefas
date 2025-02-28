@@ -24,8 +24,9 @@ public class Tasks {
 	@Column(name = "description")
 	private String description;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
-	private String status;
+	private StatusEnum status;
 	
 	@Column(name = "date_hour_creation")
 	private LocalDateTime dateHourCreation;
@@ -52,12 +53,12 @@ public class Tasks {
 		this.description = description;
 	}
 
-	public String  getStatus() {
+	public StatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(String  status) {
-		this.status = status;
+	public void setStatus(StatusEnum  statusEnum) {
+		this.status = statusEnum;
 	}
 
 	public LocalDateTime getDateHourCreation() {

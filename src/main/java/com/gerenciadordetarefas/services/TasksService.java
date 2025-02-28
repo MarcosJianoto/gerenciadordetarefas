@@ -2,6 +2,7 @@ package com.gerenciadordetarefas.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,6 +13,8 @@ import com.gerenciadordetarefas.dto.TasksDTO;
 import com.gerenciadordetarefas.entities.StatusEnum;
 import com.gerenciadordetarefas.entities.Tasks;
 import com.gerenciadordetarefas.repositories.TasksRepository;
+
+import jakarta.persistence.EnumType;
 
 @Service
 public class TasksService {
@@ -24,10 +27,9 @@ public class TasksService {
 
 	public void saveTask(TasksDTO tasksDTO) {
 
-
 		Tasks tasks = new Tasks();
 		tasks.setDescription(tasksDTO.getDescription());
-		tasks.setStatus(tasksDTO.getStatus());
+		tasks.setStatus(StatusEnum.valueOf(tasksDTO.getStatus()));
 		tasks.setDateHourCreation(LocalDateTime.now());
 
 		tasks.setDateHourComplete(
@@ -44,12 +46,11 @@ public class TasksService {
 		Tasks tasksFindById = tasksRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Task not found"));
 
-
 		tasksFindById.setDescription(tasksDTO.getDescription());
-		tasksFindById.setStatus(tasksDTO.getStatus());
+		tasksFindById.setStatus(StatusEnum.valueOf(tasksDTO.getStatus()));
 
 		tasksFindById.setDateHourComplete(
-				Objects.equals(tasksDTO.getStatus(), StatusEnum.CONCLUIDA) ? LocalDateTime.now() : null);
+				Objects.equals(tasksDTO.getStatus(), StatusEnum.CONCLUIDA.toString()) ? LocalDateTime.now() : null);
 
 		tasksFindById.setDateHourEdit(LocalDateTime.now());
 
@@ -69,11 +70,11 @@ public class TasksService {
 	}
 
 	public TasksDTO getTaskById(Integer id) {
-		
+
 		Tasks tasksFindById = tasksRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("task not found"));
 		TasksDTO tasksDTO = convertToDTO(tasksFindById);
-		
+
 		return tasksDTO;
 	}
 
@@ -82,7 +83,7 @@ public class TasksService {
 	}
 
 	private List<TasksDTO> getTasksByDateRange(LocalDateTime start, LocalDateTime finish) {
-		
+
 		List<Tasks> tasksFindByDiary = tasksRepository.findByDateHourCreationBetween(start, finish);
 		List<TasksDTO> listDtos = new ArrayList<>();
 
@@ -98,7 +99,7 @@ public class TasksService {
 	}
 
 	public List<TasksDTO> getTasksDiaryByDate(LocalDate date) {
-		return getTasksByDateRange(date.atStartOfDay(), date.atTime(23, 59, 59));
+		return getTasksByDateRange(date.atStartOfDay(), date.atTime(LocalTime.MAX));
 	}
 
 	public void deleteTasks(Integer id) {

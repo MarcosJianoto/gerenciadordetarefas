@@ -1,6 +1,7 @@
 package com.gerenciadordetarefas.controllers;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -56,9 +57,11 @@ public class TasksController {
 		return ResponseEntity.ok().body(tasksDTO);
 	}
 
-	@GetMapping("/tasks/diary{date}")
-	public ResponseEntity<List<TasksDTO>> getTasksDiaryByDate(@PathVariable LocalDate date) {
-		List<TasksDTO> tasksDTO = tasksService.getTasksDiaryByDate(date);
+	@GetMapping("/tasks/diary/{date}")
+	public ResponseEntity<List<TasksDTO>> getTasksDiaryByDate(@PathVariable String date) {
+		LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);//YYYY-MM-DD
+		
+		List<TasksDTO> tasksDTO = tasksService.getTasksDiaryByDate(parsedDate);
 		return ResponseEntity.ok().body(tasksDTO);
 	}
 

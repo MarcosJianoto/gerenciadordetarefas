@@ -4,8 +4,6 @@ public class TasksDTO {
 
 	private Integer id;
 
-	private Integer typeId;
-
 	private String description;
 
 	private String status;
@@ -22,14 +20,6 @@ public class TasksDTO {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Integer getTypeId() {
-		return typeId;
-	}
-
-	public void setTypeId(Integer typeId) {
-		this.typeId = typeId;
 	}
 
 	public String getDescription() {
