@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +15,7 @@ import com.gerenciadordetarefas.entities.StatusEnum;
 import com.gerenciadordetarefas.entities.Tasks;
 import com.gerenciadordetarefas.repositories.TasksRepository;
 
-import jakarta.persistence.EnumType;
+import jakarta.transaction.Transactional;
 
 @Service
 public class TasksService {
@@ -33,7 +34,7 @@ public class TasksService {
 		tasks.setDateHourCreation(LocalDateTime.now());
 
 		tasks.setDateHourComplete(
-				Objects.equals(tasksDTO.getStatus(), StatusEnum.CONCLUIDA) ? LocalDateTime.now() : null);
+				Objects.equals(tasksDTO.getStatus(), StatusEnum.CONCLUIDA.toString()) ? LocalDateTime.now() : null);
 
 		tasks.setDateHourEdit(LocalDateTime.now());
 
@@ -88,7 +89,11 @@ public class TasksService {
 		List<TasksDTO> listDtos = new ArrayList<>();
 
 		for (Tasks tasks : tasksFindByDiary) {
-			listDtos.add(convertToDTO(tasks));
+
+			if (tasks.getStatus().equals(StatusEnum.EM_ANDAMENTO) || tasks.getStatus().equals(StatusEnum.PENDENTE)) {
+				listDtos.add(convertToDTO(tasks));
+
+			}
 		}
 		return listDtos;
 	}
@@ -108,6 +113,51 @@ public class TasksService {
 		}
 
 		tasksRepository.deleteById(id);
+	}
+
+	public List<TasksDTO> getTasksDiaryComplete() {
+		LocalDate today = LocalDate.now();
+
+		List<Tasks> tasksDiaryComplete = tasksRepository.findByDateHourCompleteBetween(today.atStartOfDay(),
+				today.atTime(LocalTime.MAX));
+
+		List<TasksDTO> tasksDTOs = new ArrayList<>();
+		for (Tasks tasks : tasksDiaryComplete) {
+			tasksDTOs.add(convertToDTO(tasks));
+		}
+
+		return tasksDTOs;
+	}
+
+	public void editDiaryToComplete() {
+
+		LocalDate today = LocalDate.now();
+
+		List<Tasks> taskFindStatus = tasksRepository
+				.findByStatusIn(Arrays.asList(StatusEnum.EM_ANDAMENTO, StatusEnum.PENDENTE));
+
+		for (Tasks task : taskFindStatus) {
+
+			if (task.getDateHourCreation().toLocalDate().equals(today)) {
+
+				task.setId(task.getId());
+				task.setStatus(StatusEnum.CONCLUIDA);
+				task.setDescription(task.getDescription());
+				task.setDateHourEdit(task.getDateHourEdit());
+				task.setDateHourComplete(LocalDateTime.now());
+
+				tasksRepository.save(task);
+			}
+
+		}
+
+	}
+
+	@Transactional
+	public void deleteAllDiary() {
+
+		LocalDate today = LocalDate.now();
+		tasksRepository.deleteByDateHourCreationBetween(today.atStartOfDay(), today.atTime(LocalTime.MAX));
 	}
 
 }

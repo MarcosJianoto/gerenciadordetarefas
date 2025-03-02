@@ -40,6 +40,11 @@ public class TasksController {
 		tasksService.editTask(id, tasksDTO);
 		return ResponseEntity.noContent().build();
 	}
+	@PutMapping("/tasks/alltocomplete")
+	public ResponseEntity<Void> updateTasksToComplete() {
+		tasksService.editDiaryToComplete();
+		return ResponseEntity.noContent().build();
+	}
 
 	@GetMapping("/tasks/{id}")
 	public ResponseEntity<TasksDTO> getTasksById(@PathVariable Integer id) {
@@ -67,9 +72,21 @@ public class TasksController {
 		return ResponseEntity.ok().body(tasksDTO);
 	}
 
+	@GetMapping("/tasks/diarycomplete")
+	public ResponseEntity<List<TasksDTO>> getTasksDiaryComplete() {
+		List<TasksDTO> tasksDTOs = tasksService.getTasksDiaryComplete();
+		return ResponseEntity.ok().body(tasksDTOs);
+	}
+
 	@DeleteMapping("/tasks/{id}")
 	public ResponseEntity<Void> deleteTask(@PathVariable Integer id) {
 		tasksService.deleteTasks(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@DeleteMapping("/tasks")
+	public ResponseEntity<Void> deleteAllTask() {
+		tasksService.deleteAllDiary();
 		return ResponseEntity.noContent().build();
 	}
 }
