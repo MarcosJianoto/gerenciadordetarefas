@@ -40,9 +40,22 @@ public class TasksController {
 		tasksService.editTask(id, tasksDTO);
 		return ResponseEntity.noContent().build();
 	}
+
 	@PutMapping("/tasks/alltocomplete")
 	public ResponseEntity<Void> updateTasksToComplete() {
 		tasksService.editDiaryToComplete();
+		return ResponseEntity.noContent().build();
+	}
+
+	@PutMapping("/tasks/tasktopendente/{id}")
+	public ResponseEntity<Void> updateTaskToPendente(@PathVariable Integer id) {
+		tasksService.editDiaryToPendente(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PutMapping("/tasks/tasktocomplete/{id}")
+	public ResponseEntity<Void> updateTaskToComplete(@PathVariable Integer id) {
+		tasksService.editDiaryToComplete(id);
 		return ResponseEntity.noContent().build();
 	}
 

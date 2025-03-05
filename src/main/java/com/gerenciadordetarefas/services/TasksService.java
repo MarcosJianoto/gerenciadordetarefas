@@ -140,16 +140,45 @@ public class TasksService {
 
 			if (task.getDateHourCreation().toLocalDate().equals(today)) {
 
-				task.setId(task.getId());
 				task.setStatus(StatusEnum.CONCLUIDA);
-				task.setDescription(task.getDescription());
-				task.setDateHourEdit(task.getDateHourEdit());
+				task.setDateHourEdit(LocalDateTime.now());
 				task.setDateHourComplete(LocalDateTime.now());
 
 				tasksRepository.save(task);
 			}
 
 		}
+
+	}
+
+	public void editDiaryToPendente(Integer id) {
+
+		Tasks taskFindStatus = tasksRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Id not found"));
+
+		Tasks tasks = new Tasks();
+		tasks.setDescription(taskFindStatus.getDescription());
+		tasks.setStatus(StatusEnum.PENDENTE);
+		tasks.setDateHourCreation(LocalDateTime.now());
+		tasks.setDateHourComplete(null);
+
+		tasks.setDateHourEdit(LocalDateTime.now());
+
+		tasksRepository.save(tasks);
+		tasksRepository.deleteById(id);
+
+	}
+
+	public void editDiaryToComplete(Integer id) {
+
+		Tasks taskFindStatus = tasksRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Id not found"));
+
+		taskFindStatus.setStatus(StatusEnum.CONCLUIDA);
+		taskFindStatus.setDateHourEdit(LocalDateTime.now());
+		taskFindStatus.setDateHourComplete(LocalDateTime.now());
+
+		tasksRepository.save(taskFindStatus);
 
 	}
 
