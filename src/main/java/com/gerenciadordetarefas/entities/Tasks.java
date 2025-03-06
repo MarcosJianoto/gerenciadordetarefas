@@ -27,7 +27,7 @@ public class Tasks {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	private StatusEnum status;
-	
+
 	@Column(name = "date_hour_creation")
 	private LocalDateTime dateHourCreation;
 
@@ -36,6 +36,9 @@ public class Tasks {
 
 	@Column(name = "date_hour_edit")
 	private LocalDateTime dateHourEdit;
+
+	@Column(name = "repete")
+	private Boolean repete;
 
 	public Integer getId() {
 		return id;
@@ -57,7 +60,7 @@ public class Tasks {
 		return status;
 	}
 
-	public void setStatus(StatusEnum  statusEnum) {
+	public void setStatus(StatusEnum statusEnum) {
 		this.status = statusEnum;
 	}
 
@@ -84,7 +87,13 @@ public class Tasks {
 	public void setDateHourEdit(LocalDateTime dateHourEdit) {
 		this.dateHourEdit = dateHourEdit;
 	}
-	
-	
+
+	public Boolean getRepete() {
+		return repete;
+	}
+
+	public void setRepete(Boolean repete) {
+		this.repete = repete;
+	}
 
 }

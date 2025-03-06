@@ -13,6 +13,8 @@ public class TasksDTO {
 	private String dateHourComplete;
 
 	private String dateHourEdit;
+	
+	private Boolean repete;
 
 	public Integer getId() {
 		return id;
@@ -60,6 +62,14 @@ public class TasksDTO {
 
 	public void setDateHourEdit(String dateHourEdit) {
 		this.dateHourEdit = dateHourEdit;
+	}
+
+	public Boolean getRepete() {
+		return repete;
+	}
+
+	public void setRepete(Boolean repete) {
+		this.repete = repete;
 	}
 	
 	

@@ -58,6 +58,12 @@ public class TasksController {
 		tasksService.editDiaryToComplete(id);
 		return ResponseEntity.noContent().build();
 	}
+	
+	@PutMapping("/tasks/repete/{id}")
+	public ResponseEntity<Void> updateTaskToRepete(@PathVariable Integer id){
+		tasksService.editRepete(id);
+		return ResponseEntity.noContent().build();
+	}
 
 	@GetMapping("/tasks/{id}")
 	public ResponseEntity<TasksDTO> getTasksById(@PathVariable Integer id) {

@@ -37,6 +37,7 @@ public class TasksService {
 				Objects.equals(tasksDTO.getStatus(), StatusEnum.CONCLUIDA.toString()) ? LocalDateTime.now() : null);
 
 		tasks.setDateHourEdit(LocalDateTime.now());
+		tasks.setRepete(false);
 
 		tasksRepository.save(tasks);
 
@@ -67,6 +68,7 @@ public class TasksService {
 		dto.setDateHourCreation(task.getDateHourCreation().toString());
 		dto.setDateHourEdit(task.getDateHourEdit().toString());
 		dto.setDateHourComplete(task.getDateHourComplete() != null ? task.getDateHourComplete().toString() : null);
+		dto.setRepete(task.getRepete());
 		return dto;
 	}
 
@@ -172,14 +174,25 @@ public class TasksService {
 	public void editDiaryToComplete(Integer id) {
 
 		Tasks taskFindStatus = tasksRepository.findById(id)
-				.orElseThrow(() -> new IllegalArgumentException("Id not found"));
+				.orElseThrow(() -> new IllegalArgumentException("ID not found"));
 
 		taskFindStatus.setStatus(StatusEnum.CONCLUIDA);
 		taskFindStatus.setDateHourEdit(LocalDateTime.now());
 		taskFindStatus.setDateHourComplete(LocalDateTime.now());
 
 		tasksRepository.save(taskFindStatus);
+	}
 
+	public void editRepete(Integer id) {
+		Tasks taskFindById = tasksRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("ID not found"));
+		
+		if(Boolean.TRUE.equals(taskFindById.getRepete())) {
+			taskFindById.setRepete(false);
+		}
+		
+		tasksRepository.save(taskFindById);
+		
 	}
 
 	@Transactional
